@@ -1,0 +1,7 @@
+# Dependencies for final_mcp_server.py only
+
+# MCP Server Framework
+fastmcp==2.11.0
+
+# Database Dependencies
+sqlalchemy>=2.0.0
