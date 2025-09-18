@@ -314,7 +314,7 @@ def main():
     Main function to run the MCP server.
     """
     # Run the MCP server over HTTP on localhost port 8080
-    mcp.run(transport="http", host="localhost", port=8080)
+    mcp.run(transport="http", host="0.0.0.0", port=8080)
 
 
 if __name__ == "__main__":
