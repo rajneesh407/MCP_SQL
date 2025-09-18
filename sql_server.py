@@ -6,15 +6,21 @@ from fastmcp.utilities.logging import get_logger
 
 from sqlalchemy import create_engine, inspect, text
 
+import os
+
+os.environ["DB_URL"] = "sqlite:///latest_db.db"
+
 
 ### Helpers ###
 def tests_set_global(k, v):
     globals()[k] = v
 
+
 ### Database ###
 logger = get_logger(__name__)
 ENGINE = None
 import os
+
 
 def create_new_engine():
     """Create engine with MCP-optimized settings to handle long-running connections"""
