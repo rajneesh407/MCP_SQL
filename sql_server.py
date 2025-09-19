@@ -1,4 +1,5 @@
 import os
+import json
 from datetime import datetime, date
 
 from fastmcp import FastMCP
@@ -6,25 +7,16 @@ from fastmcp.utilities.logging import get_logger
 
 from sqlalchemy import create_engine, inspect, text
 
-import os
-
 os.environ["DB_URL"] = "sqlite:///latest_db.db"
-
-
-### Helpers ###
-def tests_set_global(k, v):
-    globals()[k] = v
 
 
 ### Database ###
 logger = get_logger(__name__)
 ENGINE = None
-import os
 
 
 def create_new_engine():
     """Create engine with MCP-optimized settings to handle long-running connections"""
-    import json
 
     db_engine_options = os.environ.get("DB_ENGINE_OPTIONS")
     user_options = json.loads(db_engine_options) if db_engine_options else {}
@@ -115,7 +107,7 @@ def get_db_info():
 
 ### Constants ###
 
-VERSION = "2025.8.15.91819"
+VERSION = "1.0.0"
 DB_INFO = get_db_info()
 EXECUTE_QUERY_MAX_CHARS = int(os.environ.get("EXECUTE_QUERY_MAX_CHARS", 4000))
 READ_ONLY_MODE = os.environ.get("READ_ONLY_MODE", "true").lower() == "true"
@@ -141,7 +133,15 @@ def all_table_names() -> str:
 def filter_table_names(q: str) -> str:
     with get_connection() as conn:
         inspector = inspect(conn)
-        return ", ".join(x for x in inspector.get_table_names() if q in x)
+        # Convert query to lowercase for case-insensitive matching
+        q_lower = q.lower().strip()
+        if not q_lower:
+            return ""
+        # Filter table names with case-insensitive matching
+        matching_tables = [
+            x for x in inspector.get_table_names() if q_lower in x.lower()
+        ]
+        return ", ".join(matching_tables)
 
 
 @mcp.tool(
